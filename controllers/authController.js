@@ -36,9 +36,25 @@ export const RegisterUser = asyncHandler(async (req, res) => {
   createSendToken(createUser, 201, res);
 });
 
-export const LoginUser = (req, res) => {
-  res.send("Login berhasil");
-};
+export const LoginUser = asyncHandler(async (req, res) => {
+  // validasi email dan password yang tidak diisi
+  if (!req.body.email && !req.body.password) {
+    res.status(400);
+    throw new Error("Inputan email dan password tidak boleh kosong");
+  }
+
+  // check jika email yang di input sudah terdaftar di DB
+  const userData = await User.findOne({
+    email: req.body.email,
+  });
+
+  if (userData && (await userData.comparePassword(req.body.password))) {
+    createSendToken(userData, 200, res);
+  } else {
+    res.status(400);
+    throw new Error("Invalid User");
+  }
+});
 
 export const LogoutUser = (req, res) => {
   res.send("Logout berhasil");
