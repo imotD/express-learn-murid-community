@@ -7,11 +7,16 @@ import {
   GetUser,
 } from "../controllers/authController.js";
 
+import { authMiddleware } from "../middleware/authMiddleware.js";
+
 const router = express.Router();
 
 router.post("/register", RegisterUser);
+
 router.post("/login", LoginUser);
+
 router.get("/logout", LogoutUser);
-router.get("/getUser", GetUser);
+
+router.get("/getUser", authMiddleware, GetUser);
 
 export default router;
