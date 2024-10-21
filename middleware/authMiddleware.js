@@ -40,3 +40,19 @@ export const authMiddleware = async (req, res, next) => {
 
   next();
 };
+
+export const permisionUser = (...roles) => {
+  return (req, res, next) => {
+    //['admin', 'petugas', 'kasir']
+
+    if (!roles.includes(req.user.role)) {
+      return next(
+        res.status(403).json({
+          message: "role anda tidak bisa mengakses halaman ini",
+        })
+      );
+    }
+
+    next();
+  };
+};
