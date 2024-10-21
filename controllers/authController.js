@@ -62,9 +62,27 @@ export const LoginUser = asyncHandler(async (req, res) => {
 });
 
 export const LogoutUser = (req, res) => {
-  res.send("Logout berhasil");
+  res.cookie("jwt", "", {
+    expire: new Date(0),
+    httpOnly: true,
+    security: false,
+  });
+
+  res.status(200).json({
+    message: "Logout Berhasil",
+  });
 };
 
-export const GetUser = (req, res) => {
-  res.send("GetUser berhasil");
+export const GetUser = async (req, res) => {
+  const user = await User.findById(req.user.id).select({ password: 0 });
+
+  if (user) {
+    return res.status(200).json({
+      user,
+    });
+  }
+
+  return res.status(401).json({
+    message: "user tidak ditemukan",
+  });
 };
